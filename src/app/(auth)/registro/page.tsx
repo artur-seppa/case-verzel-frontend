@@ -1,7 +1,14 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { RegisterForm } from "@/features/auth/components/register-form";
+
 export default function RegisterPage() {
   return (
-    <main className="flex-1 p-8">
-      <h1 className="text-2xl font-semibold">Criar conta</h1>
-    </main>
+    <Box component="main" sx={{ flex: 1, p: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Criar conta
+      </Typography>
+      <RegisterForm />
+    </Box>
   );
 }
