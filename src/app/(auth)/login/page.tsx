@@ -1,7 +1,14 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { LoginForm } from "@/features/auth/components/login-form";
+
 export default function LoginPage() {
   return (
-    <main className="flex-1 p-8">
-      <h1 className="text-2xl font-semibold">Entrar</h1>
-    </main>
+    <Box component="main" sx={{ flex: 1, p: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Entrar
+      </Typography>
+      <LoginForm />
+    </Box>
   );
 }
