@@ -27,10 +27,39 @@ export function SeatMap({
   const rows = groupByRow(seats);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 1,
+        position: "relative",
+        pt: 7,
+        // A tela: a grade de assentos fica sob o facho, como na sala.
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          insetInline: 0,
+          top: 0,
+          height: 48,
+          borderTop: "2px solid rgba(245, 241, 233, 0.5)",
+          background:
+            "linear-gradient(180deg, rgba(242, 181, 68, 0.22), rgba(242, 181, 68, 0) 78%)",
+          pointerEvents: "none",
+        },
+      }}
+    >
       {[...rows.entries()].map(([row, rowSeats]) => (
         <Box key={row} sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-          <Typography variant="body2" sx={{ width: 24 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              width: 24,
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: "0.75rem",
+              letterSpacing: "0.08em",
+              color: "text.secondary",
+            }}
+          >
             {row}
           </Typography>
           {rowSeats
@@ -43,7 +72,24 @@ export function SeatMap({
                 color={seat.status === "sold" ? "inherit" : "primary"}
                 disabled={seat.status !== "available"}
                 onClick={() => onSelectSeat(seat.id)}
-                sx={{ minWidth: 40, px: 0 }}
+                sx={{
+                  minWidth: 40,
+                  width: 40,
+                  height: 40,
+                  p: 0,
+                  fontFamily: "var(--font-geist-mono), monospace",
+                  fontSize: "0.6875rem",
+                  fontWeight: 600,
+                  letterSpacing: 0,
+                  textTransform: "none",
+                  // Formato de poltrona: encosto arredondado, base reta.
+                  borderRadius: "7px 7px 3px 3px",
+                  // O assento escolhido é a única lâmpada acesa da grade.
+                  "&.MuiButton-contained": {
+                    boxShadow:
+                      "0 0 0 1px rgba(242, 181, 68, 0.55), 0 4px 18px rgba(242, 181, 68, 0.35)",
+                  },
+                }}
               >
                 {seat.label}
               </Button>

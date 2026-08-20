@@ -20,14 +20,38 @@ function formatPrice(price: string): string {
 
 export function EventCard({ event }: { event: EventSummary }) {
   return (
-    <Card component={Link} href={`/eventos/${event.id}`} sx={{ textDecoration: "none", width: 240 }}>
+    <Card
+      component={Link}
+      href={`/eventos/${event.id}`}
+      sx={{
+        textDecoration: "none",
+        width: 240,
+        overflow: "hidden",
+        transition: "transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease",
+        // O cartaz na caixa de luz do saguão: acende quando você chega perto.
+        "&:hover": {
+          transform: "translateY(-4px)",
+          borderColor: "primary.main",
+          boxShadow: "0 14px 34px rgba(0, 0, 0, 0.5)",
+        },
+        "&:hover .MuiCardMedia-root": { filter: "brightness(1.06)" },
+        "@media (prefers-reduced-motion: reduce)": {
+          transition: "none",
+          "&:hover": { transform: "none" },
+        },
+      }}
+    >
       <CardActionArea>
         {event.posterUrl ? (
           <CardMedia
             component="img"
             image={event.posterUrl}
             alt={event.title}
-            sx={{ aspectRatio: "2 / 3" }}
+            sx={{
+              aspectRatio: "2 / 3",
+              filter: "brightness(0.92)",
+              transition: "filter 160ms ease",
+            }}
           />
         ) : null}
         <CardContent>
@@ -37,7 +61,17 @@ export function EventCard({ event }: { event: EventSummary }) {
           <Typography variant="body2" color="text.secondary">
             {formatDate(event.date)} · {event.location}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              mt: 0.75,
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontWeight: 600,
+              letterSpacing: "0.02em",
+              color: "primary.main",
+            }}
+          >
             {formatPrice(event.price)}
           </Typography>
         </CardContent>
