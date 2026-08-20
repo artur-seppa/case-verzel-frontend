@@ -7,8 +7,10 @@ Frontend da Plataforma de Eventos e Ingressos. Next.js (App Router), organizado 
 ## Stack
 
 - Next.js (App Router) + React
+- TanStack Query para dados client-side, `fetch` nativo em Server Components pra páginas públicas
 - Zod + React Hook Form para formulários
 - `qrcode.react` (geração de QR) + `html5-qrcode` (leitura pela câmera na portaria)
+- Vitest + Testing Library
 
 ## Configuração local
 
@@ -24,6 +26,14 @@ Frontend da Plataforma de Eventos e Ingressos. Next.js (App Router), organizado 
    ```
 
 A aplicação sobe em `http://localhost:3001` (ajuste a porta se necessário, precisa bater com `FRONTEND_URL` configurado na API para o CORS funcionar).
+
+## Testes
+
+```bash
+npm test
+npm run test:watch
+npm run test:cov
+```
 
 ## Estrutura
 
