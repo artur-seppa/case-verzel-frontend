@@ -2,8 +2,6 @@
 
 Frontend da Plataforma de Eventos e Ingressos. Next.js (App Router), organizado por feature.
 
-> Projeto em desenvolvimento — este README será expandido conforme as features forem implementadas.
-
 ## Stack
 
 - Next.js (App Router) + React
@@ -35,6 +33,13 @@ npm run test:watch
 npm run test:cov
 ```
 
+Verificação de tipos e build de produção:
+
+```bash
+npx tsc --noEmit
+npm run build
+```
+
 ## Estrutura
 
 ```
@@ -44,3 +49,35 @@ src/
   shared/         → api-client, ui, hooks, types
   proxy.ts        → checagem otimista de rotas autenticadas
 ```
+
+## Dados de teste (seed)
+
+Os dados de teste são semeados pelo backend (`npm run seed` em `../case-verzel-api`) — este projeto não tem seed próprio, é só o consumidor da API. Senha `senha123` para todos:
+
+| E-mail | Papel |
+|---|---|
+| `organizador@verzel.com` | Organizador |
+| `cliente1@verzel.com` | Cliente |
+| `cliente2@verzel.com` | Cliente |
+| `portaria@verzel.com` | Portaria |
+
+Evento semeado: "Homem-Aranha: Um Novo Dia", Cinema Verzel - Sala 3, 24 assentos disponíveis.
+
+## Limitações conhecidas
+
+- **"Evento errado" na portaria**: o backend (`POST /gatekeeper/validate`) não recebe nem valida contra um `eventId` — só retorna o evento a que o ingresso pertence. A tela de portaria pede pro operador selecionar o evento antes de escanear e compara o resultado no cliente; se o ingresso for de outro evento, ele já foi marcado como `used` no backend mesmo assim (não há como escopar a validação por evento sem mudar o backend).
+- **Timeout de pagamento**: se a stream SSE de pagamento não emitir nenhum evento em 30s, a tela de checkout mostra uma falha genérica com opção de tentar de novo, em vez de aguardar indefinidamente.
+- **`GET /reservations/:id`**: endpoint adicionado ao backend depois da primeira versão implementada, especificamente para a tela de checkout conseguir recuperar os dados da reserva em caso de F5/link direto (sem ele, esse contexto só existiria em memória do lado do cliente).
+- **Verificação manual não realizada**: a leitura de QR code pela câmera (`Scanner`, feature portaria) e a checagem visual do tema em um navegador real (contraste, overflow, "lê como intencional") não foram verificadas neste ciclo de implementação — dependem de hardware de câmera e de um navegador real, indisponíveis no ambiente onde o frontend foi construído. Pendente de verificação manual antes de considerar a portaria e o tema visual prontos para produção.
+
+## Uso de IA
+
+Ferramenta: Claude Code (Anthropic), do design ao código.
+
+- **Design e planejamento**: a arquitetura deste frontend (split Server Components/TanStack Query, feature-based folders, troca de Tailwind por um tema MUI customizado, o workaround client-side pro "evento errado" na portaria, a decisão de adicionar `GET /reservations/:id`) foi discutida e decidida em sessão de brainstorming, documentada em `docs/superpowers/specs/2026-08-20-frontend-eventos-ingressos-design.md`. O contrato exato da API (endpoints, DTOs, enums, cookies, seed) foi extraído lendo o código-fonte do backend (`../case-verzel-api`), não inventado.
+- **Plano de implementação**: `docs/superpowers/plans/2026-08-20-frontend-eventos-ingressos.md` quebra o trabalho em tarefas com TDD (teste antes da implementação) tarefa a tarefa — cada uma com testes reais rodados e passando antes do commit.
+- **Decisões humanas explícitas ao longo do processo**: escopo restrito a filmes/assentos (não generalizar pra "shows"/pista); manter só TanStack Query (não trocar React Hook Form por TanStack Form); trocar Tailwind por Material UI com tema customizado a fundo, especificamente pra não cair na cara padrão de MUI que o case pede pra evitar; adicionar `GET /reservations/:id` no backend em vez de depender de `sessionStorage`.
+- **O que não teve IA envolvida**: execução real dos testes/build (`npm test`, `npm run build`), verificação manual do fluxo de câmera na portaria (a IA não consegue testar hardware de câmera), e a decisão final de aprovar cada etapa do design/plano antes da implementação prosseguir.
+- **Divergência do processo planejado**: a sessão de implementação original foi interrompida por um desligamento inesperado da máquina no meio da Tarefa 15 (o commit já tinha sido feito, mas o relatório do subagente que a implementou nunca chegou a ser escrito). A retomada recuperou o trabalho a partir do worktree Git (nada foi perdido) e, antes de continuar para a Tarefa 16, corrigiu três problemas pré-existentes que só o `npm run build` — não rodado desde a Tarefa 7 — expunha: falta de `<Suspense>` em `/login` (`useSearchParams`), páginas públicas de dado ao vivo (catálogo, detalhe do evento, ingresso compartilhado) sem `export const dynamic = "force-dynamic"` (seriam estaticamente pré-renderizadas em build, congelando disponibilidade de assento/status do ingresso), e uma função passada de Server para Client Component em `/organizador/eventos`. Essas correções, e uma limpeza de `className` morto do Tailwind (pré-Tarefa 1) em `meus-ingressos`/`portaria`, não estavam no plano original.
+
+_Atualizar esta seção se o processo real de implementação divergir do planejado aqui._
