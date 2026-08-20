@@ -37,7 +37,7 @@ function MyTicketsList() {
 
 export default function MyTicketsPage() {
   return (
-    <main className="flex-1 p-8">
+    <Box component="main" sx={{ flex: 1, p: 4 }}>
       <RoleGate role="client">
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           <Typography variant="h4" component="h1">
@@ -46,6 +46,6 @@ export default function MyTicketsPage() {
           <MyTicketsList />
         </Box>
       </RoleGate>
-    </main>
+    </Box>
   );
 }

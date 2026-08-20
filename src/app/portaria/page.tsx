@@ -5,7 +5,7 @@ import { GatekeeperView } from "@/features/gatekeeper/components/gatekeeper-view
 
 export default function GatekeeperPage() {
   return (
-    <main className="flex-1 p-8">
+    <Box component="main" sx={{ flex: 1, p: 4 }}>
       <RoleGate role="gatekeeper">
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           <Typography variant="h4" component="h1">
@@ -14,6 +14,6 @@ export default function GatekeeperPage() {
           <GatekeeperView />
         </Box>
       </RoleGate>
-    </main>
+    </Box>
   );
 }
