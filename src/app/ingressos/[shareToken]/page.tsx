@@ -3,6 +3,8 @@ import Typography from "@mui/material/Typography";
 import { ticketsApi } from "@/features/tickets/api/tickets-api";
 import { TicketCard } from "@/features/tickets/components/ticket-card";
 
+export const dynamic = "force-dynamic";
+
 export default async function SharedTicketPage({
   params,
 }: PageProps<"/ingressos/[shareToken]">) {

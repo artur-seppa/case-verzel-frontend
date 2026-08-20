@@ -3,6 +3,8 @@ import Typography from "@mui/material/Typography";
 import { eventsApi } from "@/features/events/api/events-api";
 import { EventCard } from "@/features/events/components/event-card";
 
+export const dynamic = "force-dynamic";
+
 export default async function EventsPage() {
   const { data: events } = await eventsApi.list();
 

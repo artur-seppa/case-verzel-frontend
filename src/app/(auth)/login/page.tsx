@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { LoginForm } from "@/features/auth/components/login-form";
@@ -8,7 +9,9 @@ export default function LoginPage() {
       <Typography variant="h4" component="h1" gutterBottom>
         Entrar
       </Typography>
-      <LoginForm />
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </Box>
   );
 }
