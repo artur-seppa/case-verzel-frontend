@@ -13,3 +13,19 @@ export interface Reservation {
   expiresAt: string;
   createdAt: string;
 }
+
+export interface ReservationDetail {
+  id: string;
+  status: ReservationStatus;
+  expiresAt: string;
+  createdAt: string;
+  event: {
+    id: string;
+    title: string;
+    posterUrl: string | null;
+    date: string;
+    location: string;
+    price: string;
+  };
+  seat: { id: string; label: string };
+}

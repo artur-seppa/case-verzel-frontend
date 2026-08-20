@@ -1,3 +1,6 @@
+import { RoleGate } from "@/features/auth/components/role-gate";
+import { CheckoutView } from "@/features/reservations/components/checkout-view";
+
 export default async function CheckoutPage({
   params,
 }: PageProps<"/checkout/[reservationId]">) {
@@ -5,7 +8,9 @@ export default async function CheckoutPage({
 
   return (
     <main className="flex-1 p-8">
-      <h1 className="text-2xl font-semibold">Pagamento — reserva {reservationId}</h1>
+      <RoleGate role="client">
+        <CheckoutView reservationId={reservationId} />
+      </RoleGate>
     </main>
   );
 }
