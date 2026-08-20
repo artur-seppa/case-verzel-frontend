@@ -3622,7 +3622,9 @@ import { useToast } from "@/shared/ui/toast-provider";
 import { getErrorMessage } from "@/shared/api-client/error-messages";
 
 const schema = z.object({
-  movie: z.custom<CatalogMovie>((value) => !!value, "Escolha um filme do catálogo"),
+  movie: z
+    .custom<CatalogMovie | null>()
+    .refine((value): value is CatalogMovie => value !== null, "Escolha um filme do catálogo"),
   date: z
     .string()
     .min(1, "Informe a data e hora")
@@ -3636,13 +3638,12 @@ const schema = z.object({
   price: z.string().regex(/^\d+(\.\d{1,2})?$/, "Informe um preço válido, ex: 39.90"),
 });
 
-type FormInput = {
-  movie: CatalogMovie | null;
-  date: string;
-  location: string;
-  capacity: number | string;
-  price: string;
-};
+// z.input (pre-parse shape, matches useForm's defaultValues/register) differs from
+// z.output (post-transform/coerce shape, what onValid receives) — see the `capacity`
+// and `date` fields above. Passing both generics to useForm is required for this to
+// type-check; a single shared type here causes a Resolver assignability error.
+type FormInput = z.input<typeof schema>;
+type FormOutput = z.output<typeof schema>;
 
 export function CreateEventForm() {
   const router = useRouter();
@@ -3652,7 +3653,7 @@ export function CreateEventForm() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormInput>({
+  } = useForm<FormInput, unknown, FormOutput>({
     resolver: zodResolver(schema),
     defaultValues: { movie: null, date: "", location: "", capacity: "", price: "" },
   });
@@ -3663,7 +3664,7 @@ export function CreateEventForm() {
     onError: (error) => showToast(getErrorMessage(error)),
   });
 
-  const onValid = (values: z.infer<typeof schema>) =>
+  const onValid = (values: FormOutput) =>
     mutation.mutate({
       tmdbId: values.movie.tmdbId,
       date: values.date,
@@ -3675,7 +3676,7 @@ export function CreateEventForm() {
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit(onValid as never)}
+      onSubmit={handleSubmit(onValid)}
       sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 420 }}
     >
       <Controller
