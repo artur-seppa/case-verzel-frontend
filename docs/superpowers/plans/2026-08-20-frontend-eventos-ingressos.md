@@ -1025,10 +1025,11 @@ import { renderWithProviders } from "@test/support/render-with-providers";
 import { ApiError } from "@/shared/api-client";
 
 const replaceMock = vi.fn();
-const searchParamsGetMock = vi.fn(() => null);
+const searchParamsGetMock = vi.fn((): string | null => null);
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: replaceMock }),
   useSearchParams: () => ({ get: searchParamsGetMock }),
+  useServerInsertedHTML: vi.fn(),
 }));
 
 const loginMock = vi.fn();
@@ -1219,6 +1220,7 @@ import { ApiError } from "@/shared/api-client";
 const replaceMock = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: replaceMock }),
+  useServerInsertedHTML: vi.fn(),
 }));
 
 const registerMock = vi.fn();
@@ -2041,6 +2043,7 @@ import { EventDetail } from "../types";
 const pushMock = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
+  useServerInsertedHTML: vi.fn(),
 }));
 
 const createReservationMock = vi.fn();
@@ -2814,7 +2817,7 @@ Append to `src/features/reservations/components/checkout-view.spec.tsx` (add the
 ```tsx
 import { useRouter } from "next/navigation";
 
-vi.mock("next/navigation", () => ({ useRouter: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: vi.fn(), useServerInsertedHTML: vi.fn() }));
 
 vi.mock("@/features/payments/api/payments-api", () => ({
   paymentsApi: {
@@ -3149,7 +3152,7 @@ import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "@test/support/render-with-providers";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn() }), useServerInsertedHTML: vi.fn() }));
 
 vi.mock("@/features/auth/api/use-current-user", () => ({
   useCurrentUser: () => ({
@@ -3523,7 +3526,7 @@ import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "@test/support/render-with-providers";
 
 const pushMock = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: pushMock }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: pushMock }), useServerInsertedHTML: vi.fn() }));
 
 vi.mock("@/features/catalog/api/catalog-api", () => ({
   catalogApi: {
