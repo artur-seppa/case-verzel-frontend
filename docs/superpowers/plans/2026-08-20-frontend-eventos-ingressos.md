@@ -978,7 +978,7 @@ export function RoleGate({ role, children }: { role: UserRole; children: React.R
 
   if (isLoading || isError || !user || user.role !== role) {
     return (
-      <Box display="flex" justifyContent="center" p={8}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 8 }}>
         <CircularProgress />
       </Box>
     );
@@ -2407,7 +2407,7 @@ export function CheckoutView({ reservationId }: { reservationId: string }) {
 
   if (isLoading || !reservation) {
     return (
-      <Box display="flex" justifyContent="center" p={8}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 8 }}>
         <CircularProgress />
       </Box>
     );
@@ -2941,7 +2941,7 @@ export function CheckoutView({ reservationId }: { reservationId: string }) {
 
   if (isLoading || !reservation) {
     return (
-      <Box display="flex" justifyContent="center" p={8}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 8 }}>
         <CircularProgress />
       </Box>
     );
@@ -3222,7 +3222,7 @@ function MyTicketsList() {
 
   if (isLoading || !data) {
     return (
-      <Box display="flex" justifyContent="center" p={8}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 8 }}>
         <CircularProgress />
       </Box>
     );
@@ -3824,7 +3824,7 @@ export function OrganizerEventsList() {
 
   if (isLoading || !data) {
     return (
-      <Box display="flex" justifyContent="center" p={8}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 8 }}>
         <CircularProgress />
       </Box>
     );

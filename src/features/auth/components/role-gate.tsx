@@ -24,7 +24,7 @@ export function RoleGate({ role, children }: { role: UserRole; children: React.R
 
   if (isLoading || isError || !user || user.role !== role) {
     return (
-      <Box display="flex" justifyContent="center" p={8}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 8 }}>
         <CircularProgress />
       </Box>
     );
