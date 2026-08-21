@@ -13,6 +13,8 @@ export function Scanner({ onScan }: { onScan: (decodedText: string) => void }) {
   }, [onScan]);
 
   useEffect(() => {
+    document.getElementById(CONTAINER_ID)?.replaceChildren();
+
     const scanner = new Html5Qrcode(CONTAINER_ID);
     let unmounted = false;
 

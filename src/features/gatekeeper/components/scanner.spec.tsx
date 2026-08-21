@@ -65,4 +65,16 @@ describe("Scanner", () => {
 
     expect(stopMock).toHaveBeenCalled();
   });
+
+  it("clears the container before starting, so a leftover video from a prior mount can't linger", () => {
+    render(<Scanner onScan={vi.fn()} />);
+    const container = document.getElementById("gatekeeper-scanner")!;
+    container.appendChild(document.createElement("video"));
+
+    const replaceChildrenSpy = vi.spyOn(Element.prototype, "replaceChildren");
+    render(<Scanner onScan={vi.fn()} />);
+
+    expect(replaceChildrenSpy).toHaveBeenCalled();
+    replaceChildrenSpy.mockRestore();
+  });
 });

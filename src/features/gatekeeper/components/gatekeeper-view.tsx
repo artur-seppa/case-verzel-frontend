@@ -66,9 +66,12 @@ export function GatekeeperView() {
         <Typography color="text.secondary">Nenhum evento hoje.</Typography>
       ) : (
         <FormControl fullWidth>
-          <InputLabel id="event-label">Evento</InputLabel>
+          <InputLabel id="event-label" shrink>
+            Evento
+          </InputLabel>
           <Select
             fullWidth
+            displayEmpty
             labelId="event-label"
             label="Evento"
             value={eventId}
@@ -76,7 +79,7 @@ export function GatekeeperView() {
             renderValue={() =>
               selectedEvent
                 ? `${selectedEvent.title} — ${formatEventDate(selectedEvent.date)}`
-                : ""
+                : "Selecione o evento"
             }
           >
             {todaysEvents.map((event) => (
