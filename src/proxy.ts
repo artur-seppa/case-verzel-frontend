@@ -2,11 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 const PROTECTED_PREFIXES = ["/organizador", "/meus-ingressos", "/portaria"];
 
-/**
- * Checagem otimista: só confirma que o cookie existe, sem verificar a
- * assinatura (o segredo do JWT vive na API). A autorização de verdade
- * sempre acontece nos guards do NestJS a cada requisição.
- */
 export function proxy(request: NextRequest) {
   const isProtected = PROTECTED_PREFIXES.some((prefix) =>
     request.nextUrl.pathname.startsWith(prefix),

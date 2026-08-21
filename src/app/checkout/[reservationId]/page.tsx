@@ -1,11 +1,17 @@
+import Box from "@mui/material/Box";
+import { RoleGate } from "@/features/auth/components/role-gate";
+import { CheckoutView } from "@/features/reservations/components/checkout-view";
+
 export default async function CheckoutPage({
   params,
 }: PageProps<"/checkout/[reservationId]">) {
   const { reservationId } = await params;
 
   return (
-    <main className="flex-1 p-8">
-      <h1 className="text-2xl font-semibold">Pagamento — reserva {reservationId}</h1>
-    </main>
+    <Box component="main" sx={{ flex: 1, p: 4 }}>
+      <RoleGate role="client">
+        <CheckoutView reservationId={reservationId} />
+      </RoleGate>
+    </Box>
   );
 }

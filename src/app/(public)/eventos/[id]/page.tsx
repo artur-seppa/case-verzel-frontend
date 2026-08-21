@@ -1,11 +1,16 @@
-export default async function EventDetailPage({
-  params,
-}: PageProps<"/eventos/[id]">) {
+import Box from "@mui/material/Box";
+import { eventsApi } from "@/features/events/api/events-api";
+import { EventDetailView } from "@/features/events/components/event-detail-view";
+
+export const dynamic = "force-dynamic";
+
+export default async function EventDetailPage({ params }: PageProps<"/eventos/[id]">) {
   const { id } = await params;
+  const event = await eventsApi.get(id);
 
   return (
-    <main className="flex-1 p-8">
-      <h1 className="text-2xl font-semibold">Evento {id}</h1>
-    </main>
+    <Box component="main" sx={{ flex: 1, p: 4 }}>
+      <EventDetailView event={event} />
+    </Box>
   );
 }
