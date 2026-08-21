@@ -24,4 +24,13 @@ describe("EventCard", () => {
     expect(screen.getByText(/Cinema Verzel - Sala 3/)).toBeInTheDocument();
     expect(screen.getByText(/R\$\s?39,90/)).toBeInTheDocument();
   });
+
+  it("renders the poster image when the event has one", () => {
+    render(
+      <EventCard
+        event={{ ...event, posterUrl: "https://image.tmdb.org/t/p/w500/poster.jpg" }}
+      />,
+    );
+    expect(screen.getByRole("img", { name: "Homem-Aranha: Um Novo Dia" })).toBeInTheDocument();
+  });
 });

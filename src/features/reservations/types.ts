@@ -27,5 +27,7 @@ export interface ReservationDetail {
     location: string;
     price: string;
   };
-  seat: { id: string; label: string };
+  // null once the seat hold has been released (e.g. an expired reservation) —
+  // the backend no longer has a seat linked to this reservation to report.
+  seat: { id: string; label: string } | null;
 }

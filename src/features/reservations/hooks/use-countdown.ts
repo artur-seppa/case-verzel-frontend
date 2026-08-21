@@ -17,6 +17,10 @@ export function useCountdown(targetIso: string) {
   const [secondsLeft, setSecondsLeft] = useState(() => secondsUntil(targetIso));
 
   useEffect(() => {
+    // Recompute immediately on mount/target change, not just on the next tick —
+    // otherwise a stale value from a prior render (e.g. a placeholder "now"
+    // target used before real data loads) lingers for up to a full second.
+    setSecondsLeft(secondsUntil(targetIso));
     const interval = setInterval(() => setSecondsLeft(secondsUntil(targetIso)), 1000);
     return () => clearInterval(interval);
   }, [targetIso]);

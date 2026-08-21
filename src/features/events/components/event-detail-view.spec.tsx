@@ -1,19 +1,16 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "@test/support/render-with-providers";
-import { ApiError } from "@/shared/api-client";
 import { EventDetail } from "../types";
 
-const pushMock = vi.fn();
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: pushMock }),
+  useRouter: () => ({ push: vi.fn() }),
   useServerInsertedHTML: vi.fn(),
 }));
 
-const createReservationMock = vi.fn();
 vi.mock("@/features/reservations/api/reservations-api", () => ({
-  reservationsApi: { create: (...args: unknown[]) => createReservationMock(...args) },
+  reservationsApi: { create: vi.fn() },
 }));
 
 import { EventDetailView } from "./event-detail-view";
@@ -33,41 +30,21 @@ const event: EventDetail = {
   seats: [{ id: "seat-1", row: "A", number: 1, label: "A1", status: "available" }],
 };
 
-describe("EventDetailView reservation flow", () => {
-  beforeEach(() => {
-    pushMock.mockClear();
-    createReservationMock.mockReset();
-  });
-
-  it("creates a reservation for the selected seat and navigates to checkout", async () => {
-    createReservationMock.mockResolvedValue({
-      id: "res-1",
-      eventId: "event-1",
-      clientId: "client-1",
-      status: "pending_payment",
-      expiresAt: "2026-09-01T22:10:00Z",
-      createdAt: "2026-09-01T22:00:00Z",
-    });
+describe("EventDetailView", () => {
+  it("opens the reservation drawer for the selected seat", async () => {
     renderWithProviders(<EventDetailView event={event} />);
 
     await userEvent.click(screen.getByRole("button", { name: "A1" }));
     await userEvent.click(screen.getByRole("button", { name: "Reservar" }));
 
-    await waitFor(() =>
-      expect(createReservationMock).toHaveBeenCalledWith({ eventId: "event-1", seatId: "seat-1" }),
-    );
-    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/checkout/res-1"));
+    expect(await screen.findByRole("heading", { name: "Reservar ingresso" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Confirmar reserva" })).toBeInTheDocument();
+    expect(screen.getAllByText("Homem-Aranha: Um Novo Dia").length).toBeGreaterThan(0);
   });
 
-  it("shows a toast when the seat was just taken by someone else", async () => {
-    createReservationMock.mockRejectedValue(new ApiError(409, "CONFLICT", "seat gone"));
+  it("does not render the drawer before a seat is selected", () => {
     renderWithProviders(<EventDetailView event={event} />);
 
-    await userEvent.click(screen.getByRole("button", { name: "A1" }));
-    await userEvent.click(screen.getByRole("button", { name: "Reservar" }));
-
-    expect(
-      await screen.findByText("Esse assento acabou de ser reservado por outra pessoa."),
-    ).toBeInTheDocument();
+    expect(screen.queryByText("Reservar ingresso")).not.toBeInTheDocument();
   });
 });

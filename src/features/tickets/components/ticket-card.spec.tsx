@@ -1,5 +1,7 @@
-import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { renderWithProviders } from "@test/support/render-with-providers";
 import { TicketCard } from "./ticket-card";
 import { TicketDetail } from "../types";
 
@@ -10,15 +12,61 @@ const ticket: TicketDetail = {
 };
 
 describe("TicketCard", () => {
-  it("renders the event, seat and a QR code for the ticket", () => {
-    render(<TicketCard ticket={ticket} />);
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("renders the event and seat without exposing the QR code up front", () => {
+    renderWithProviders(<TicketCard ticket={ticket} />);
     expect(screen.getByText("Homem-Aranha: Um Novo Dia")).toBeInTheDocument();
     expect(screen.getByText(/Assento A1/)).toBeInTheDocument();
-    expect(document.querySelector("svg")).toBeInTheDocument();
+    expect(screen.queryByText("abc123")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ver QR Code" })).toBeInTheDocument();
+  });
+
+  it("reveals the QR code and its raw token only after the button is clicked", async () => {
+    renderWithProviders(<TicketCard ticket={ticket} />);
+
+    await userEvent.click(screen.getByRole("button", { name: "Ver QR Code" }));
+
+    expect(screen.getByText("abc123")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ocultar QR Code" })).toBeInTheDocument();
   });
 
   it("shows a used badge when the ticket has already been validated", () => {
-    render(<TicketCard ticket={{ ...ticket, ticket: { ...ticket.ticket, status: "used" } }} />);
+    renderWithProviders(
+      <TicketCard ticket={{ ...ticket, ticket: { ...ticket.ticket, status: "used" } }} />,
+    );
     expect(screen.getByText("Utilizado")).toBeInTheDocument();
+  });
+
+  describe("sharing", () => {
+    beforeEach(() => {
+      vi.stubGlobal("location", { origin: "http://localhost:3001" });
+    });
+
+    it("copies the share link to the clipboard when the Web Share API is unavailable", async () => {
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      vi.stubGlobal("navigator", { clipboard: { writeText }, share: undefined });
+
+      renderWithProviders(<TicketCard ticket={ticket} />);
+      await userEvent.click(screen.getByRole("button", { name: "Compartilhar" }));
+
+      expect(writeText).toHaveBeenCalledWith("http://localhost:3001/ingressos/share-xyz");
+      expect(await screen.findByText("Link do ingresso copiado!")).toBeInTheDocument();
+    });
+
+    it("uses the native Web Share API when available", async () => {
+      const share = vi.fn().mockResolvedValue(undefined);
+      vi.stubGlobal("navigator", { share });
+
+      renderWithProviders(<TicketCard ticket={ticket} />);
+      await userEvent.click(screen.getByRole("button", { name: "Compartilhar" }));
+
+      expect(share).toHaveBeenCalledWith({
+        title: "Homem-Aranha: Um Novo Dia",
+        url: "http://localhost:3001/ingressos/share-xyz",
+      });
+    });
   });
 });

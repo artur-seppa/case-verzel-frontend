@@ -3,8 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "@test/support/render-with-providers";
 
-const pushMock = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: pushMock }), useServerInsertedHTML: vi.fn() }));
+vi.mock("next/navigation", () => ({ useServerInsertedHTML: vi.fn() }));
 
 vi.mock("@/features/catalog/api/catalog-api", () => ({
   catalogApi: {
@@ -24,7 +23,6 @@ import { CreateEventForm } from "./create-event-form";
 
 describe("CreateEventForm", () => {
   beforeEach(() => {
-    pushMock.mockClear();
     createEventMock.mockReset();
   });
 
@@ -35,7 +33,7 @@ describe("CreateEventForm", () => {
     expect(await screen.findByText("A capacidade máxima é 260 lugares")).toBeInTheDocument();
   });
 
-  it("submits the form and redirects to the organizer events list", async () => {
+  it("submits the form and calls onSuccess", async () => {
     createEventMock.mockResolvedValue({
       id: "event-1",
       organizerId: "org-1",
@@ -49,7 +47,8 @@ describe("CreateEventForm", () => {
       price: "39.90",
       createdAt: "2026-08-01T00:00:00Z",
     });
-    renderWithProviders(<CreateEventForm />);
+    const onSuccess = vi.fn();
+    renderWithProviders(<CreateEventForm onSuccess={onSuccess} />);
 
     const movieInput = await screen.findByLabelText("Filme");
     await userEvent.type(movieInput, "Homem");
@@ -71,6 +70,6 @@ describe("CreateEventForm", () => {
         price: "39.90",
       }),
     );
-    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/organizador/eventos"));
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled());
   });
 });

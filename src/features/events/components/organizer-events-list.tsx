@@ -5,12 +5,12 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import { eventsApi } from "../api/events-api";
-import { EventCard } from "./event-card";
+import { EventsCarousel } from "./events-carousel";
 
 export function OrganizerEventsList() {
   const { data, isLoading } = useQuery({
     queryKey: ["events", "mine"],
-    queryFn: () => eventsApi.listMine(),
+    queryFn: () => eventsApi.listMine(1, 100),
   });
 
   if (isLoading || !data) {
@@ -25,11 +25,5 @@ export function OrganizerEventsList() {
     return <Typography>Você ainda não publicou nenhum evento.</Typography>;
   }
 
-  return (
-    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-      {data.data.map((event) => (
-        <EventCard key={event.id} event={event} />
-      ))}
-    </Box>
-  );
+  return <EventsCarousel events={data.data} />;
 }

@@ -1,12 +1,12 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { eventsApi } from "@/features/events/api/events-api";
-import { EventCard } from "@/features/events/components/event-card";
+import { EventsCarousel } from "@/features/events/components/events-carousel";
 
 export const dynamic = "force-dynamic";
 
 export default async function EventsPage() {
-  const { data: events } = await eventsApi.list();
+  const { data: events } = await eventsApi.list(1, 100);
 
   return (
     <Box component="main" sx={{ flex: 1, p: 4 }}>
@@ -16,11 +16,7 @@ export default async function EventsPage() {
       {events.length === 0 ? (
         <Typography>Nenhum evento publicado no momento.</Typography>
       ) : (
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-          {events.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </Box>
+        <EventsCarousel events={events} />
       )}
     </Box>
   );

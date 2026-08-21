@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Barlow_Condensed, Geist, Geist_Mono } from "next/font/google";
+import Box from "@mui/material/Box";
 import { ThemeProvider } from "@/shared/providers/theme-provider";
 import { QueryProvider } from "@/shared/providers/query-provider";
 import { ToastProvider } from "@/shared/ui/toast-provider";
+import { AppSidebar } from "@/shared/ui/app-sidebar";
+import { ProfileMenu } from "@/shared/ui/profile-menu";
+import { GatekeeperGuard } from "@/shared/ui/gatekeeper-guard";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,7 +40,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <ThemeProvider>
           <QueryProvider>
-            <ToastProvider>{children}</ToastProvider>
+            <ToastProvider>
+              <Box sx={{ display: "flex" }}>
+                <GatekeeperGuard />
+                <AppSidebar />
+                <ProfileMenu />
+                <Box sx={{ flexGrow: 1, minWidth: 0, minHeight: "100vh", overflowX: "hidden" }}>
+                  {children}
+                </Box>
+              </Box>
+            </ToastProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>

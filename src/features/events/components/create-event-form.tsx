@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -39,8 +38,8 @@ const schema = z.object({
 type FormInput = z.input<typeof schema>;
 type FormOutput = z.output<typeof schema>;
 
-export function CreateEventForm() {
-  const router = useRouter();
+export function CreateEventForm({ onSuccess }: { onSuccess?: () => void }) {
+  const queryClient = useQueryClient();
   const { showToast } = useToast();
   const {
     register,
@@ -56,7 +55,10 @@ export function CreateEventForm() {
     // Wrapped (not `mutationFn: eventsApi.create`) so react-query's mutationFnContext
     // second argument isn't forwarded to eventsApi.create.
     mutationFn: (input: CreateEventInput) => eventsApi.create(input),
-    onSuccess: () => router.push("/organizador/eventos"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events", "mine"] });
+      onSuccess?.();
+    },
     onError: (error) => showToast(getErrorMessage(error)),
   });
 

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithProviders } from "@test/support/render-with-providers";
 
 vi.mock("@/features/tickets/api/tickets-api", () => ({
   ticketsApi: {
@@ -15,7 +16,7 @@ import SharedTicketPage from "./page";
 
 describe("SharedTicketPage", () => {
   it("renders the shared ticket without requiring authentication", async () => {
-    render(
+    renderWithProviders(
       await SharedTicketPage({
         params: Promise.resolve({ shareToken: "xyz" }),
         searchParams: Promise.resolve({}),

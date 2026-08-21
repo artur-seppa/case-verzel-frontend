@@ -31,9 +31,11 @@ export function SeatMap({
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: 1,
+        alignItems: "center",
+        gap: 1.5,
         position: "relative",
         pt: 7,
+        pb: 2,
         // A tela: a grade de assentos fica sob o facho, como na sala.
         "&::before": {
           content: '""',
@@ -49,13 +51,13 @@ export function SeatMap({
       }}
     >
       {[...rows.entries()].map(([row, rowSeats]) => (
-        <Box key={row} sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+        <Box key={row} sx={{ display: "flex", gap: 1.5, alignItems: "center", justifyContent: "center" }}>
           <Typography
             variant="body2"
             sx={{
-              width: 24,
+              width: 28,
               fontFamily: "var(--font-geist-mono), monospace",
-              fontSize: "0.75rem",
+              fontSize: "0.875rem",
               letterSpacing: "0.08em",
               color: "text.secondary",
             }}
@@ -73,12 +75,12 @@ export function SeatMap({
                 disabled={seat.status !== "available"}
                 onClick={() => onSelectSeat(seat.id)}
                 sx={{
-                  minWidth: 40,
-                  width: 40,
-                  height: 40,
+                  minWidth: 56,
+                  width: 56,
+                  height: 56,
                   p: 0,
                   fontFamily: "var(--font-geist-mono), monospace",
-                  fontSize: "0.6875rem",
+                  fontSize: "0.875rem",
                   fontWeight: 600,
                   letterSpacing: 0,
                   textTransform: "none",

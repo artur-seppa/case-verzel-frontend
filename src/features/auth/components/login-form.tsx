@@ -19,6 +19,11 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
+function safeRedirectTarget(value: string | null): string {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/";
+  return value;
+}
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,7 +39,7 @@ export function LoginForm() {
     mutationFn: authApi.login,
     onSuccess: (user) => {
       queryClient.setQueryData(["auth", "me"], user);
-      router.replace(searchParams.get("redirectTo") ?? "/");
+      router.replace(safeRedirectTarget(searchParams.get("redirectTo")));
     },
     onError: (error) => {
       showToast(getErrorMessage(error, { UNAUTHORIZED: "E-mail ou senha incorretos." }));

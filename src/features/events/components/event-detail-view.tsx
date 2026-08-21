@@ -1,16 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { EventDetail } from "../types";
 import { useSeatSelection } from "@/features/reservations/hooks/use-seat-selection";
 import { SeatMap } from "@/features/reservations/components/seat-map";
-import { reservationsApi } from "@/features/reservations/api/reservations-api";
-import { useToast } from "@/shared/ui/toast-provider";
-import { getErrorMessage } from "@/shared/api-client/error-messages";
+import { ReservationDrawer } from "@/features/reservations/components/reservation-drawer";
 
 function formatPrice(price: string): string {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
@@ -19,19 +16,8 @@ function formatPrice(price: string): string {
 }
 
 export function EventDetailView({ event }: { event: EventDetail }) {
-  const router = useRouter();
-  const { showToast } = useToast();
   const { selectedSeat, selectSeat } = useSeatSelection(event.seats);
-
-  const mutation = useMutation({
-    mutationFn: () => reservationsApi.create({ eventId: event.id, seatId: selectedSeat!.id }),
-    onSuccess: (reservation) => router.push(`/checkout/${reservation.id}`),
-    onError: (error) => {
-      showToast(
-        getErrorMessage(error, { CONFLICT: "Esse assento acabou de ser reservado por outra pessoa." }),
-      );
-    },
-  });
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -49,14 +35,18 @@ export function EventDetailView({ event }: { event: EventDetail }) {
       {selectedSeat ? (
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Typography>Assento selecionado: {selectedSeat.label}</Typography>
-          <Button
-            variant="contained"
-            disabled={mutation.isPending}
-            onClick={() => mutation.mutate()}
-          >
+          <Button variant="contained" onClick={() => setDrawerOpen(true)}>
             Reservar
           </Button>
         </Box>
+      ) : null}
+      {selectedSeat ? (
+        <ReservationDrawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          event={event}
+          seat={selectedSeat}
+        />
       ) : null}
     </Box>
   );

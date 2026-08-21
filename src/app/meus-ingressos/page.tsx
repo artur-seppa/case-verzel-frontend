@@ -27,7 +27,13 @@ function MyTicketsList() {
   }
 
   return (
-    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" },
+        gap: 3,
+      }}
+    >
       {data.data.map((ticket) => (
         <TicketCard key={ticket.ticket.id} ticket={ticket} />
       ))}
